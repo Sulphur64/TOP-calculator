@@ -39,6 +39,8 @@ body{
     display: grid;
     grid-template-rows: repeat(3, 1fr);
     grid-gap: 5px;
+
+    overflow: hidden;
     
 }
 
@@ -89,3 +91,4 @@ body{
 .ZERO{
     grid-area:5/1/5/3;
 }
+
