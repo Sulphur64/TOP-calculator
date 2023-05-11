@@ -8,7 +8,7 @@ const objCalculator = {
     active: [0], //refactor: operand1 is now the active value. the only modifiable one
     operator: null,
     operatorPrev: null,
-    passive:'',
+    passive:0,
 };
 
 screenLine1.textContent = objCalculator.active;
@@ -21,11 +21,17 @@ function inputReact(){ //maps the input
         button.addEventListener("click", kismet, false);
 
         function kismet(){
-            console.log(button.textContent)
             switch (button.textContent) {
-
-                case ('0'||'1'||'2'||'3'||'4'||'5'||'6'||'7'||'8'||'9'):
-                    console.log(button.textContent)
+                case ('0'):
+                case ('1'):
+                case ('2'):
+                case ('3'):
+                case ('4'):
+                case ('5'):
+                case ('6'):
+                case ('7'):
+                case ('8'):
+                case ('9'):
                     scribe();
                     break;
 
@@ -34,8 +40,12 @@ function inputReact(){ //maps the input
                     objCalculator.active.includes('.') ? screenLine3.textContent="Þórr disapproves." : scribe();
                     break;
 
-                case ("-" || "+" || "*" || "/"):                  
-                    Kalk(objCalculator.passive, objCalculator.active, objCalculator.operator)
+                case ("-"):
+                case ("+"):
+                case ("/"):
+                case ("*"):
+                    objCalculator.operator=(button.textContent);
+                    Kalk(objCalculator.active, objCalculator.passive, objCalculator.operator)
                     objCalculator.active=[0];
                     objCalculator.operator=null;
                     break;
@@ -44,7 +54,7 @@ function inputReact(){ //maps the input
                     if((objCalculator.operatorPrev=='/') && (objCalculator.active==0)){
                         screenLine3.textContent="Þórr forbid you."
                     }else{
-                        Kalk(objCalculator.passive, objCalculator.active, objCalculator.operatorPrev)
+                        Kalk(objCalculator.active, objCalculator.passive, objCalculator.operatorPrev)
                         objCalculator.active=[0];
                         objCalculator.operator=null;
                     };
@@ -64,6 +74,8 @@ function inputReact(){ //maps the input
                     objCalculator.operatorPrev= null;
                     objCalculator.passive='';
 
+                    screenLine1.textContent = objCalculator.active;
+                    screenLine2.textContent = objCalculator.passive;
                     screenLine3.textContent="No Errors Detected"
                     break;
             
@@ -84,9 +96,10 @@ function inputReact(){ //maps the input
 };
 
 function Kalk(a,b,operator){
+
     switch (operator) {
         case "-":
-            b = (parseFloat(b) - a.join('')).toFixed(2);
+            b = (parseFloat(b) - a.join(''))//.toFixed(2);
             screenLine2.textContent = b+operator;
             break;
 
@@ -118,4 +131,5 @@ function Kalk(a,b,operator){
         default:
             break;
     }
+    objCalculator.operatorPrev = operator;
 };
