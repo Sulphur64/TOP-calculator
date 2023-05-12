@@ -5,18 +5,16 @@ const buttons = document.querySelectorAll("button.keys")
 
 
 const objCalculator = {
-    active: [0], //refactor: operand1 is now the active value. the only modifiable one
+     //refactor: operand1 is now the active value. the only modifiable one. refactor : now a string. refactor : now using textcontent directly.
     operator: null,
     operatorPrev: null,
-    passive:0,
+    
 };
-
-screenLine1.textContent = objCalculator.active;
-screenLine2.textContent = objCalculator.passive;
 
 inputReact()
 
 function inputReact(){ //maps the input
+
     buttons.forEach((button)=>{
         button.addEventListener("click", kismet, false);
 
@@ -33,50 +31,56 @@ function inputReact(){ //maps the input
                 case ('8'):
                 case ('9'):
                     scribe();
+                    screenLine3.textContent="No Errors Detected";
+
                     break;
 
                 case ('.'):
+                    screenLine1.textContent.includes('.') ? screenLine3.textContent="Þórr disapproves." : scribe();
 
-                    objCalculator.active.includes('.') ? screenLine3.textContent="Þórr disapproves." : scribe();
                     break;
 
                 case ("-"):
                 case ("+"):
                 case ("/"):
                 case ("*"):
-                    objCalculator.operator=(button.textContent);
-                    Kalk(objCalculator.active, objCalculator.passive, objCalculator.operator)
-                    objCalculator.active=[0];
-                    objCalculator.operator=null;
+                    objCalculator.operator = (button.textContent);
+                    Kalk(screenLine1.textContent, screenLine2.textContent, objCalculator.operator);
+                    screenLine2.textContent+= objCalculator.operatorPrev; // show symbol of the last operation if operator is used to solve the calc.
+                    objCalculator.operator = null;
+                    screenLine1.textContent='';
+                    screenLine3.textContent="No Errors Detected";
+
                     break;
 
                 case ("="):                  
-                    if((objCalculator.operatorPrev=='/') && (objCalculator.active==0)){
+                    if((objCalculator.operatorPrev=='/') && (screenLine1.textContent==0)){
                         screenLine3.textContent="Þórr forbid you."
                     }else{
-                        Kalk(objCalculator.active, objCalculator.passive, objCalculator.operatorPrev)
-                        objCalculator.active=[0];
+                        Kalk(screenLine1.textContent, screenLine2.textContent, objCalculator.operatorPrev)
+                        objCalculator.active=[];
                         objCalculator.operator=null;
+                        objCalculator.operatorPrev=null;
+                        screenLine1.textContent=0;
+                        screenLine3.textContent="No Errors Detected";
                     };
                     break;
 
                 case ("C"):
-                    if(objCalculator.active.length>1){
-                        objCalculator.active.pop();
-                        screenLine1.textContent = objCalculator.active.join(''); //could add slice(1)to remove 0
+                    (screenLine1.textContent.length>0) ?
+                        screenLine1.textContent = screenLine1.textContent.slice(0,-1):
+                        screenLine3.textContent="Þórr disapproves.";
 
-                    }else screenLine3.textContent="Þórr disapproves.";
                     break;
 
                 case ("DEL"):
-                    objCalculator.active= [0];
                     objCalculator.operator= null;
                     objCalculator.operatorPrev= null;
-                    objCalculator.passive='';
 
-                    screenLine1.textContent = objCalculator.active;
-                    screenLine2.textContent = objCalculator.passive;
-                    screenLine3.textContent="No Errors Detected"
+                    screenLine1.textContent = 0;
+                    screenLine2.textContent = 0;
+                    screenLine3.textContent="No Errors Detected";
+
                     break;
             
                 default:
@@ -84,8 +88,7 @@ function inputReact(){ //maps the input
             }
 
             function scribe(){
-                objCalculator.active.push(button.textContent);
-                screenLine1.textContent = objCalculator.active.join('');
+                screenLine1.textContent += button.textContent;
             };
         };
     });
@@ -97,39 +100,40 @@ function inputReact(){ //maps the input
 
 function Kalk(a,b,operator){
 
-    switch (operator) {
-        case "-":
-            b = (parseFloat(b) - a.join(''))//.toFixed(2);
-            screenLine2.textContent = b+operator;
-            break;
-
-        case "+":
-            b = (parseFloat(b) + a.join('')).toFixed(2);
-            screenLine2.textContent = b+operator;
-            break;
-
-        case "/":
-            if(a==!0){
-                b = (parseFloat(b) / a.join('')).toFixed(2);
-                screenLine2.textContent = b+operator;
-            } else {
-                b = (a.join('') / 1).toFixed(2);
-                screenLine2.textContent = b+operator;
-            };
-            break;
-
-        case "*":
-            if(a==!0){
-                b = (parseFloat(b) * a.join('')).toFixed(2);
-                screenLine2.textContent = b+operator;
-            } else {
-                b = (a.join('') * 1).toFixed(2);
-                screenLine2.textContent = b+operator;
-            };
-            break;
-    
-        default:
-            break;
-    }
     objCalculator.operatorPrev = operator;
+
+    if (b == 0){
+        b= parseFloat(a);
+        screenLine2.textContent=b;
+
+    }else{
+        switch (operator) {
+            case "-":
+                b = (parseFloat(b) - parseFloat(a)).toFixed(2).replace(/[a-z.,]00$/,'');
+                screenLine2.textContent = b;
+                break;
+
+            case "+":
+                b = (parseFloat(b) + parseFloat(a)).toFixed(2).replace(/[a-z.,]00$/,'');;
+                screenLine2.textContent = b;
+                break;
+
+            case "/":
+                b = (parseFloat(b) / parseFloat(a)).toFixed(2).replace(/[a-z.,]00$/,'');;
+                screenLine2.textContent = b;
+                
+                break;
+
+            case "*":
+                b = (parseFloat(b) * parseFloat(a)).toFixed(2).replace(/[a-z.,]00$/,'');
+                screenLine2.textContent = b;
+
+                break;
+        
+            default:
+                break;
+        };
+    };
+
+    
 };
